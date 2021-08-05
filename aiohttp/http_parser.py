@@ -1,6 +1,7 @@
 import abc
 import asyncio
 import collections
+import os
 import re
 import string
 import zlib
@@ -56,6 +57,10 @@ METHRE = re.compile(r"[!#$%&'*+\-.^_`|~0-9A-Za-z]+")
 VERSRE = re.compile(r"HTTP/(\d+).(\d+)")
 HDRRE = re.compile(rb"[\x00-\x1F\x7F()<>@,;:\[\]={} \t\\\\\"]")
 
+DEFAULT_MAX_LINE_SIZE = int(os.getenv('AIOHTTP_DEFAULT_MAX_LINE_SIZE', 8190))
+DEFAULT_MAX_HEADERS = int(os.getenv('AIOHTTP_DEFAULT_MAX_HEADERS', 32768))
+DEFAULT_MAX_FIELD_SIZE = int(os.getenv('AIOHTTP_DEFAULT_MAX_FIELD_SIZE', 65536))
+
 RawRequestMessage = collections.namedtuple(
     "RawRequestMessage",
     [
@@ -107,9 +112,9 @@ class ChunkState(IntEnum):
 class HeadersParser:
     def __init__(
         self,
-        max_line_size: int = 8190,
-        max_headers: int = 32768,
-        max_field_size: int = 65536,
+        max_line_size: int = DEFAULT_MAX_LINE_SIZE,
+        max_headers: int = DEFAULT_MAX_HEADERS,
+        max_field_size: int = DEFAULT_MAX_FIELD_SIZE,
     ) -> None:
         self.max_line_size = max_line_size
         self.max_headers = max_headers
@@ -204,9 +209,9 @@ class HttpParser(abc.ABC):
         protocol: Optional[BaseProtocol] = None,
         loop: Optional[asyncio.AbstractEventLoop] = None,
         limit: int = 2 ** 16,
-        max_line_size: int = 8190,
-        max_headers: int = 32768,
-        max_field_size: int = 65536,
+        max_line_size: int = DEFAULT_MAX_LINE_SIZE,
+        max_headers: int = DEFAULT_MAX_HEADERS,
+        max_field_size: int = DEFAULT_MAX_FIELD_SIZE,
         timer: Optional[BaseTimerContext] = None,
         code: Optional[int] = None,
         method: Optional[str] = None,
