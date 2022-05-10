@@ -18,7 +18,7 @@ from libc.string cimport memcpy
 
 from multidict import CIMultiDict as _CIMultiDict, CIMultiDictProxy as _CIMultiDictProxy
 from yarl import URL as _URL
-from os import getenv
+import os
 
 from aiohttp import hdrs
 
